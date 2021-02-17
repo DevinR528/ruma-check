@@ -30,7 +30,7 @@ checksum = "cdb031dd78e28731d87d56cc8ffef4a8f36ca26c38fe2de700543e627f8a464a"
 [[package]]
 name = "base_db"
 version = "0.0.0"
-source = "git+https://github.com/rust-analyzer/rust-analyzer.git#00d5a9563af9c84cdea9d029a9583be0513cc459"
+source = "git+https://github.com/rust-analyzer/rust-analyzer.git#054caa81c5b3eb28fb99d508d8bd553d9920053b"
 dependencies = [
  "cfg",
  "profile",
@@ -74,7 +74,7 @@ dependencies = [
 [[package]]
 name = "cfg"
 version = "0.0.0"
-source = "git+https://github.com/rust-analyzer/rust-analyzer.git#00d5a9563af9c84cdea9d029a9583be0513cc459"
+source = "git+https://github.com/rust-analyzer/rust-analyzer.git#054caa81c5b3eb28fb99d508d8bd553d9920053b"
 dependencies = [
  "rustc-hash",
  "tt",
@@ -228,7 +228,7 @@ checksum = "8b23360e99b8717f20aaa4598f5a6541efbe30630039fbc7706cf954a87947ae"
 [[package]]
 name = "la-arena"
 version = "0.2.0"
-source = "git+https://github.com/rust-analyzer/rust-analyzer.git#00d5a9563af9c84cdea9d029a9583be0513cc459"
+source = "git+https://github.com/rust-analyzer/rust-analyzer.git#054caa81c5b3eb28fb99d508d8bd553d9920053b"
 
 [[package]]
 name = "lazy_static"
@@ -319,7 +319,7 @@ dependencies = [
 [[package]]
 name = "parser"
 version = "0.0.0"
-source = "git+https://github.com/rust-analyzer/rust-analyzer.git#00d5a9563af9c84cdea9d029a9583be0513cc459"
+source = "git+https://github.com/rust-analyzer/rust-analyzer.git#054caa81c5b3eb28fb99d508d8bd553d9920053b"
 dependencies = [
  "drop_bomb",
 ]
@@ -327,7 +327,7 @@ dependencies = [
 [[package]]
 name = "paths"
 version = "0.0.0"
-source = "git+https://github.com/rust-analyzer/rust-analyzer.git#00d5a9563af9c84cdea9d029a9583be0513cc459"
+source = "git+https://github.com/rust-analyzer/rust-analyzer.git#054caa81c5b3eb28fb99d508d8bd553d9920053b"
 
 [[package]]
 name = "perf-event"
@@ -369,7 +369,7 @@ dependencies = [
 [[package]]
 name = "proc_macro_api"
 version = "0.0.0"
-source = "git+https://github.com/rust-analyzer/rust-analyzer.git#00d5a9563af9c84cdea9d029a9583be0513cc459"
+source = "git+https://github.com/rust-analyzer/rust-analyzer.git#054caa81c5b3eb28fb99d508d8bd553d9920053b"
 dependencies = [
  "base_db",
  "crossbeam-channel",
@@ -384,7 +384,7 @@ dependencies = [
 [[package]]
 name = "profile"
 version = "0.0.0"
-source = "git+https://github.com/rust-analyzer/rust-analyzer.git#00d5a9563af9c84cdea9d029a9583be0513cc459"
+source = "git+https://github.com/rust-analyzer/rust-analyzer.git#054caa81c5b3eb28fb99d508d8bd553d9920053b"
 dependencies = [
  "cfg-if",
  "countme",
@@ -397,7 +397,7 @@ dependencies = [
 [[package]]
 name = "project_model"
 version = "0.0.0"
-source = "git+https://github.com/rust-analyzer/rust-analyzer.git#00d5a9563af9c84cdea9d029a9583be0513cc459"
+source = "git+https://github.com/rust-analyzer/rust-analyzer.git#054caa81c5b3eb28fb99d508d8bd553d9920053b"
 dependencies = [
  "anyhow",
  "base_db",
@@ -581,7 +581,7 @@ dependencies = [
 [[package]]
 name = "stdx"
 version = "0.0.0"
-source = "git+https://github.com/rust-analyzer/rust-analyzer.git#00d5a9563af9c84cdea9d029a9583be0513cc459"
+source = "git+https://github.com/rust-analyzer/rust-analyzer.git#054caa81c5b3eb28fb99d508d8bd553d9920053b"
 dependencies = [
  "always-assert",
 ]
@@ -600,7 +600,7 @@ dependencies = [
 [[package]]
 name = "syntax"
 version = "0.0.0"
-source = "git+https://github.com/rust-analyzer/rust-analyzer.git#00d5a9563af9c84cdea9d029a9583be0513cc459"
+source = "git+https://github.com/rust-analyzer/rust-analyzer.git#054caa81c5b3eb28fb99d508d8bd553d9920053b"
 dependencies = [
  "arrayvec",
  "indexmap",
@@ -621,7 +621,7 @@ dependencies = [
 [[package]]
 name = "test_utils"
 version = "0.0.0"
-source = "git+https://github.com/rust-analyzer/rust-analyzer.git#00d5a9563af9c84cdea9d029a9583be0513cc459"
+source = "git+https://github.com/rust-analyzer/rust-analyzer.git#054caa81c5b3eb28fb99d508d8bd553d9920053b"
 dependencies = [
  "dissimilar",
  "profile",
@@ -640,7 +640,7 @@ checksum = "288cb548dbe72b652243ea797201f3d481a0609a967980fcc5b2315ea811560a"
 [[package]]
 name = "text_edit"
 version = "0.0.0"
-source = "git+https://github.com/rust-analyzer/rust-analyzer.git#00d5a9563af9c84cdea9d029a9583be0513cc459"
+source = "git+https://github.com/rust-analyzer/rust-analyzer.git#054caa81c5b3eb28fb99d508d8bd553d9920053b"
 dependencies = [
  "text-size",
 ]
@@ -652,7 +652,7 @@ version = "0.1.0"
 [[package]]
 name = "toolchain"
 version = "0.0.0"
-source = "git+https://github.com/rust-analyzer/rust-analyzer.git#00d5a9563af9c84cdea9d029a9583be0513cc459"
+source = "git+https://github.com/rust-analyzer/rust-analyzer.git#054caa81c5b3eb28fb99d508d8bd553d9920053b"
 dependencies = [
  "home",
 ]
@@ -660,7 +660,7 @@ dependencies = [
 [[package]]
 name = "tt"
 version = "0.0.0"
-source = "git+https://github.com/rust-analyzer/rust-analyzer.git#00d5a9563af9c84cdea9d029a9583be0513cc459"
+source = "git+https://github.com/rust-analyzer/rust-analyzer.git#054caa81c5b3eb28fb99d508d8bd553d9920053b"
 dependencies = [
  "smol_str",
  "stdx",
@@ -687,7 +687,7 @@ checksum = "f7fe0bb3479651439c9112f72b6c505038574c9fbb575ed1bf3b797fa39dd564"
 [[package]]
 name = "vfs"
 version = "0.0.0"
-source = "git+https://github.com/rust-analyzer/rust-analyzer.git#00d5a9563af9c84cdea9d029a9583be0513cc459"
+source = "git+https://github.com/rust-analyzer/rust-analyzer.git#054caa81c5b3eb28fb99d508d8bd553d9920053b"
 dependencies = [
  "fst",
  "paths",

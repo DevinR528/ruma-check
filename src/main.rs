@@ -7,7 +7,6 @@ use std::{
 use project_model::PackageData;
 use thing::thing_test;
 
-mod parse;
 mod project;
 mod rules;
 
@@ -22,7 +21,7 @@ fn main() {
             let root = CargoInfo::build_crate_root(&loc).expect("Failed to parse Cargo.toml");
             if let Err(errors) = check_workspace(root) {
                 for e in errors {
-                    eprintln!("{:?}", e);
+                    eprintln!("{}", e);
                 }
             }
         }
@@ -31,13 +30,13 @@ fn main() {
     }
 }
 
-fn check_workspace(info: CargoInfo) -> Result<(), Vec<String>> {
+fn check_workspace(info: CargoInfo) -> Result<(), Vec<rules::ValidationError>> {
     let mut errors = vec![];
     for pack in info.work.packages() {
         let p = &info.work[pack];
         if p.is_member {
             if let Err(e) = check_files(p) {
-                errors.extend_from_slice(&e);
+                errors.extend(e);
             }
         }
     }
@@ -47,7 +46,7 @@ fn check_workspace(info: CargoInfo) -> Result<(), Vec<String>> {
     Ok(())
 }
 
-fn check_files(package: &PackageData) -> Result<(), Vec<String>> {
+fn check_files(package: &PackageData) -> Result<(), Vec<rules::ValidationError>> {
     // Infallible
     let mut path: PathBuf = package.manifest.clone().try_into().unwrap();
     path.pop();
@@ -55,18 +54,15 @@ fn check_files(package: &PackageData) -> Result<(), Vec<String>> {
 
     let mut errors = vec![];
     for file in walk_dirs(&path) {
-        if let Err(e) = check_fmt_rules(&file) {
-            errors.push(e);
+        let text = fs::read_to_string(&file)
+            .unwrap_or_else(|_| panic!("Failed to open file at {:?}", file));
+        if let Err(e) = rules::validate_source(&text) {
+            errors.extend(e);
         }
     }
     if !errors.is_empty() {
         return Err(errors);
     }
-    Ok(())
-}
-
-fn check_fmt_rules(p: &Path) -> Result<(), String> {
-    let tree = parse::to_tokens(p)?;
     Ok(())
 }
 

@@ -10,6 +10,8 @@ edition = "2018"
 syntax = { git = "https://github.com/rust-analyzer/rust-analyzer.git" }
 project_model = { git = "https://github.com/rust-analyzer/rust-analyzer.git" }
 paths = { git = "https://github.com/rust-analyzer/rust-analyzer.git" }
+
+
 thing = {path = "./thing" }
 
 [workspace]
