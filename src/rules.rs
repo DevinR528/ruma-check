@@ -1,64 +1,33 @@
-use std::{fmt::Display, fs, path::Path};
+use std::path::{Path, PathBuf};
 
 use syntax::{
-    ast::{
-        AstNode, AstToken, {self},
-    },
-    SourceFile, SyntaxError, SyntaxNode, TextRange, TextSize,
+    ast::{self, AstNode},
+    SourceFile, SyntaxNode, SyntaxToken,
 };
+
+use crate::error::ValidationError;
 
 mod imports;
 
-#[derive(Debug, Default)]
-pub struct ValidationError {
-    msg: String,
-    source: Option<SyntaxError>,
-}
-
-impl Display for ValidationError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &self.source {
-            Some(err) => write!(f, "{}{}", self.msg, err),
-            None => write!(f, "{}", self.msg),
-        }
-    }
-}
-
-impl From<&str> for ValidationError {
-    fn from(msg: &str) -> Self {
-        Self {
-            msg: msg.to_string(),
-            ..Default::default()
-        }
-    }
-}
-
-impl From<String> for ValidationError {
-    fn from(msg: String) -> Self {
-        Self {
-            msg,
-            ..Default::default()
-        }
-    }
-}
-
 pub trait NodeRule {
+    fn name(&self) -> &str;
     fn apply_rule(&mut self, node: &SyntaxNode);
     fn match_node(&self, node: &SyntaxNode) -> bool;
     fn validate(&self) -> Result<(), ValidationError>;
 }
 
-pub trait TokenRule: AstToken {
+pub trait TokenRule {
+    fn apply_rule(&mut self, node: &SyntaxToken);
+    fn match_node(&self, node: &SyntaxToken) -> bool;
     fn validate(&self) -> Result<(), ValidationError>;
-    fn match_node(&self, node: SyntaxNode) -> bool;
 }
 
-pub fn validate_source(text: &str) -> Result<(), Vec<ValidationError>> {
+pub fn validate_source<P: AsRef<Path>>(text: &str, path: &P) -> Result<(), Vec<ValidationError>> {
     let mut errors = vec![];
 
     let source = SourceFile::parse(&text)
         .ok()
-        .expect("TODO: SyntaxError's from SourceFile parse");
+        .expect("TODO: SyntaxError's from SourceFile::parse");
 
     // println!("{:#?}", source.syntax());
 
@@ -102,5 +71,11 @@ use syntax::{
     SourceFile,
 };
 "#;
-    validate_source(text).unwrap();
+    println!(
+        "{}",
+        validate_source(text, &PathBuf::from("src/rules.rs"))
+            .unwrap_err()
+            .first()
+            .unwrap()
+    );
 }

@@ -1,9 +1,9 @@
 use syntax::{
     ast::{self, AstNode, AstToken},
-    SourceFile, SyntaxKind, SyntaxNode,
+    SyntaxNode, TextRange,
 };
 
-use crate::rules::{NodeRule, TokenRule, ValidationError};
+use crate::{error::ValidationError, rules::NodeRule};
 
 #[derive(Debug, Default)]
 pub struct ImportsRule {
@@ -16,6 +16,9 @@ impl ImportsRule {
     }
 }
 impl NodeRule for ImportsRule {
+    fn name(&self) -> &str {
+        "Imports rule, ruma specifies an ordering of imports."
+    }
     fn apply_rule(&mut self, node: &SyntaxNode) {
         if let Some(import) = ast::Use::cast(node.clone()) {
             if let Some(path) = import.use_tree().unwrap().path() {
@@ -30,17 +33,15 @@ impl NodeRule for ImportsRule {
     }
 
     fn match_node(&self, node: &SyntaxNode) -> bool {
-        node.kind() == SyntaxKind::USE
+        ast::Use::can_cast(node.kind())
     }
 
     fn validate(&self) -> Result<(), ValidationError> {
-        println!(
-            "{:?}",
-            self.found
-                .iter()
-                .map(|(p, w)| (p.to_string(), w))
-                .collect::<Vec<_>>()
-        );
-        Ok(())
+        Err(ValidationError {
+            msg: "Hello message".to_string(),
+            source: self.found.last().clone().unwrap().0.syntax().clone(),
+            span: TextRange::new(3.into(), 8.into()),
+            file: "src/rules/imports.rs".to_string(),
+        })
     }
 }

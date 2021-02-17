@@ -1,10 +1,7 @@
-use std::{
-    convert::TryInto,
-    path::{Path, PathBuf},
-};
+use std::{convert::TryInto, path::Path};
 
-use paths::{AbsPath, AbsPathBuf};
-use project_model::{CargoConfig, CargoWorkspace, ProjectManifest};
+use paths::AbsPathBuf;
+use project_model::{CargoConfig, CargoWorkspace};
 
 #[derive(Clone, Debug)]
 pub struct CargoInfo {

@@ -5,8 +5,8 @@ use std::{
 };
 
 use project_model::PackageData;
-use thing::thing_test;
 
+mod error;
 mod project;
 mod rules;
 
@@ -30,7 +30,7 @@ fn main() {
     }
 }
 
-fn check_workspace(info: CargoInfo) -> Result<(), Vec<rules::ValidationError>> {
+fn check_workspace(info: CargoInfo) -> Result<(), Vec<error::ValidationError>> {
     let mut errors = vec![];
     for pack in info.work.packages() {
         let p = &info.work[pack];
@@ -46,7 +46,7 @@ fn check_workspace(info: CargoInfo) -> Result<(), Vec<rules::ValidationError>> {
     Ok(())
 }
 
-fn check_files(package: &PackageData) -> Result<(), Vec<rules::ValidationError>> {
+fn check_files(package: &PackageData) -> Result<(), Vec<error::ValidationError>> {
     // Infallible
     let mut path: PathBuf = package.manifest.clone().try_into().unwrap();
     path.pop();
@@ -56,7 +56,10 @@ fn check_files(package: &PackageData) -> Result<(), Vec<rules::ValidationError>>
     for file in walk_dirs(&path) {
         let text = fs::read_to_string(&file)
             .unwrap_or_else(|_| panic!("Failed to open file at {:?}", file));
-        if let Err(e) = rules::validate_source(&text) {
+
+        // Here is where the magic happens.
+        // We validate all files found for this crate!
+        if let Err(e) = rules::validate_source(&text, &file) {
             errors.extend(e);
         }
     }
