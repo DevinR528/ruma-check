@@ -9,6 +9,7 @@ use project_model::PackageData;
 mod error;
 mod project;
 mod rules;
+mod visit;
 
 use project::CargoInfo;
 
