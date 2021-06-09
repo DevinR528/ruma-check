@@ -9,72 +9,70 @@ use project_model::PackageData;
 mod error;
 mod project;
 mod rules;
-mod visit;
 
+use error::Emitter;
 use project::CargoInfo;
+
+pub type EzError = Box<dyn std::error::Error>;
 
 fn main() {
     let args = env::args().collect::<Vec<_>>();
 
+    let mut emitter = Emitter::default();
     match args.as_slice() {
         [_] => {
             let loc = env::current_dir().expect("No current directory found.");
-            let root = CargoInfo::build_crate_root(&loc).expect("Failed to parse Cargo.toml");
-            if let Err(errors) = check_workspace(root) {
-                for e in errors {
-                    eprintln!("{}", e);
-                }
-            }
+            let root =
+                CargoInfo::build_crate_root(&loc).expect("Failed to parse Cargo.toml");
+            check_workspace(root, &mut emitter).unwrap_or_else(|e| {
+                eprintln!("{}", e);
+                std::process::exit(1);
+            });
         }
         [] => panic!(),
         _ => panic!(),
     }
+
+    if emitter.found_errors() {
+        emitter.emit().unwrap_or_else(|e| {
+            eprintln!("{}", e);
+            std::process::exit(1);
+        });
+        std::process::exit(1);
+    }
 }
 
-fn check_workspace(info: CargoInfo) -> Result<(), Vec<error::ValidationError>> {
-    let mut errors = vec![];
+fn check_workspace(info: CargoInfo, emitter: &mut Emitter) -> Result<(), EzError> {
     for pack in info.work.packages() {
         let p = &info.work[pack];
         if p.is_member {
-            if let Err(e) = check_files(p) {
-                errors.extend(e);
-            }
+            check_files(p, emitter)?;
         }
     }
-    if !errors.is_empty() {
-        return Err(errors);
-    }
+
     Ok(())
 }
 
-fn check_files(package: &PackageData) -> Result<(), Vec<error::ValidationError>> {
+fn check_files(package: &PackageData, emitter: &mut Emitter) -> Result<(), EzError> {
     // Infallible
-    let mut path: PathBuf = package.manifest.clone().try_into().unwrap();
+    let mut path: PathBuf = package.manifest.clone().try_into()?;
     path.pop();
     path.push("src");
 
-    let mut errors = vec![];
     for file in walk_dirs(&path) {
         let text = fs::read_to_string(&file)
-            .unwrap_or_else(|_| panic!("Failed to open file at {:?}", file));
+            .map_err(|_| format!("Failed to open file at {:?}", file))?;
 
         // Here is where the magic happens.
         // We validate all files found for this crate!
-        if let Err(e) = rules::validate_source(&text, &file) {
-            errors.extend(e);
-        }
+        rules::validate_source(&file, &text, emitter)?;
     }
-    if !errors.is_empty() {
-        return Err(errors);
-    }
+
     Ok(())
 }
 
 fn walk_dirs(dir: &Path) -> impl Iterator<Item = PathBuf> {
-    Walker {
-        dir_stack: vec![dir.to_owned()],
-        files: vec![],
-    }
+    Walker { dir_stack: vec![dir.to_owned()], files: vec![] }
 }
 
 struct Walker {

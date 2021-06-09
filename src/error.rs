@@ -1,29 +1,84 @@
-use std::fmt;
+use syntax::{SyntaxNode, TextRange};
 
-use syntax::{
-    ast::{self, AstNode},
-    SourceFile, SyntaxError, SyntaxNode, SyntaxToken, TextRange, TextSize,
-};
+#[derive(Clone, Debug, Default)]
+pub struct Emitter {
+    diag: Vec<Diagnostic>,
+    found_errors: bool,
+    source_map: (),
+}
 
-#[derive(Debug)]
-pub struct ValidationError {
+impl Emitter {
+    pub fn found_errors(&self) -> bool { !self.diag.is_empty() || self.found_errors }
+
+    pub fn sugg_with_span(
+        &mut self,
+        msg: &str,
+        sugg: &str,
+        span: TextRange,
+        node: SyntaxNode,
+        file: &str,
+    ) {
+        self.found_errors = true;
+        self.diag.push(Diagnostic::Spanned(SpannedError {
+            msg: msg.to_owned(),
+            source: node,
+            span,
+            file: file.to_owned(),
+        }));
+    }
+
+    pub fn simple_sugg(&mut self, msg: &str, sugg: &str, file: &str) {
+        self.found_errors = true;
+        self.diag.push(Diagnostic::Simple(SimpleError {
+            msg: msg.to_owned(),
+            file: file.to_owned(),
+            sugg: sugg.to_owned(),
+        }));
+    }
+
+    pub fn emit(self) -> std::io::Result<()> {
+        for err in self.diag {
+            match err {
+                Diagnostic::Spanned(spanned) => eprint!("{}", spanned.emit_error()),
+                Diagnostic::Simple(simple) => {
+                    eprintln!("error: {}", simple.msg);
+                    eprintln!("--> {}", simple.file);
+                    eprintln!("{}", simple.sugg);
+                }
+            }
+        }
+
+        Ok(())
+    }
+}
+
+#[derive(Clone, Debug)]
+pub enum Diagnostic {
+    Spanned(SpannedError),
+    Simple(SimpleError),
+}
+
+#[derive(Clone, Debug)]
+pub struct SpannedError {
     pub msg: String,
     pub source: SyntaxNode,
     pub span: TextRange,
     pub file: String,
 }
 
-impl fmt::Display for ValidationError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Display::fmt(&self.emit_error(), f)
-    }
+#[derive(Clone, Debug)]
+pub struct SimpleError {
+    pub msg: String,
+    pub file: String,
+    pub sugg: String,
 }
 
-impl ValidationError {
+impl SpannedError {
     fn emit_error(&self) -> String {
         let mut buffer = String::new();
         let root = util::root_node(&self.source);
-        let (row, col) = root.to_string().chars().take(self.span.end().into()).fold(
+        // TODO: do this once and use it by mapping to Span/TextRange?
+        let (row, col) = root.to_string().chars().take(self.span.start().into()).fold(
             (0, 0),
             |(mut r, mut c), ch| {
                 if ch == '\n' {
@@ -38,7 +93,10 @@ impl ValidationError {
 
         buffer.push_str(&self.msg);
         buffer.push('\n');
-        buffer.push_str(&format!("--> {}:{}:{}", self.file, row, col));
+        buffer.push_str(&format!("--> {}:{}:{}\n", self.file, row, col));
+
+        let snippet = self.source.to_string() + "\n";
+        buffer.push_str(&snippet);
 
         buffer
     }
