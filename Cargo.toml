@@ -11,6 +11,13 @@ readme = "readme.md"
 edition = "2018"
 
 [dependencies]
+base_db = { git = "https://github.com/rust-analyzer/rust-analyzer.git" }
+hir = { git = "https://github.com/rust-analyzer/rust-analyzer.git" }
+hir_def = { git = "https://github.com/rust-analyzer/rust-analyzer.git" }
+hir_expand = { git = "https://github.com/rust-analyzer/rust-analyzer.git" }
+hir_ty = { git = "https://github.com/rust-analyzer/rust-analyzer.git" }
+ide_db = { git = "https://github.com/rust-analyzer/rust-analyzer.git" }
 paths = { git = "https://github.com/rust-analyzer/rust-analyzer.git" }
 project_model = { git = "https://github.com/rust-analyzer/rust-analyzer.git" }
 syntax = { git = "https://github.com/rust-analyzer/rust-analyzer.git" }
+rustc-hash = "1.1.0"

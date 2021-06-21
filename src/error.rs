@@ -3,12 +3,11 @@ use syntax::{SyntaxNode, TextRange};
 #[derive(Clone, Debug, Default)]
 pub struct Emitter {
     diag: Vec<Diagnostic>,
-    found_errors: bool,
     source_map: (),
 }
 
 impl Emitter {
-    pub fn found_errors(&self) -> bool { !self.diag.is_empty() || self.found_errors }
+    pub fn found_errors(&self) -> bool { !self.diag.is_empty() }
 
     pub fn sugg_with_span(
         &mut self,
@@ -18,9 +17,9 @@ impl Emitter {
         node: SyntaxNode,
         file: &str,
     ) {
-        self.found_errors = true;
         self.diag.push(Diagnostic::Spanned(SpannedError {
             msg: msg.to_owned(),
+            suggestion: sugg.to_owned(),
             source: node,
             span,
             file: file.to_owned(),
@@ -28,7 +27,6 @@ impl Emitter {
     }
 
     pub fn simple_sugg(&mut self, msg: &str, sugg: &str, file: &str) {
-        self.found_errors = true;
         self.diag.push(Diagnostic::Simple(SimpleError {
             msg: msg.to_owned(),
             file: file.to_owned(),
@@ -59,18 +57,19 @@ pub enum Diagnostic {
 }
 
 #[derive(Clone, Debug)]
-pub struct SpannedError {
-    pub msg: String,
-    pub source: SyntaxNode,
-    pub span: TextRange,
-    pub file: String,
-}
-
-#[derive(Clone, Debug)]
 pub struct SimpleError {
     pub msg: String,
     pub file: String,
     pub sugg: String,
+}
+
+#[derive(Clone, Debug)]
+pub struct SpannedError {
+    pub msg: String,
+    pub suggestion: String,
+    pub source: SyntaxNode,
+    pub span: TextRange,
+    pub file: String,
 }
 
 impl SpannedError {

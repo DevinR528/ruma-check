@@ -78,10 +78,15 @@ use syntax::{
 #[test]
 fn macro_call() {
     let mut emitter = Emitter::default();
-    let text = r#"fn main() { macro_call!(
-    foo,
-    Foo::A(true)
-); }"#;
+    let text = r#"use std::fs;
+
+fn main() {
+    macro_call!(
+        foo,
+        Foo::A(true)
+    );
+}
+"#;
     validate_source(&std::path::PathBuf::from("src/rules.rs"), text, &mut emitter)
         .unwrap();
     emitter.emit().unwrap();

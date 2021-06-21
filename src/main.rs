@@ -7,6 +7,7 @@ use std::{
 use project_model::PackageData;
 
 mod error;
+mod macro_exp;
 mod project;
 mod rules;
 
